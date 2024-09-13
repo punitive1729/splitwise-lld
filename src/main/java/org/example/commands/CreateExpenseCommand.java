@@ -26,10 +26,12 @@ public class CreateExpenseCommand extends Command {
             throw new SplitWiseServiceException("Invalid command", 400);
         }
 
-        if(!CommandNames.EXPENSE.equalsIgnoreCase(params.getFirst()) || Objects.isNull(splittingStrategyFactory.getSplittingStrategy(strategyName)))
+        SplittingStrategy splittingStrategy = splittingStrategyFactory.getSplittingStrategy(strategyName);
+
+        if(!CommandNames.EXPENSE.equalsIgnoreCase(params.getFirst()) || Objects.isNull(splittingStrategy))
             throw new SplitWiseServiceException("Invalid input", 400);
 
-       return splittingStrategyFactory.getSplittingStrategy(params.getLast()).getBill(params);
+       return splittingStrategy.getBill(params);
     }
     @Override
     public void execute(List<String> params) throws SplitWiseServiceException {
