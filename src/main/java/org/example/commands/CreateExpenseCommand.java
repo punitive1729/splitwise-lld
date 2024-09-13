@@ -19,19 +19,14 @@ public class CreateExpenseCommand extends Command {
         this.splittingStrategyFactory = splittingStrategyFactory;
     }
     private Bill getPayload(List<String> params) throws SplitWiseServiceException {
-        String strategyName = null;
+        if(!CommandNames.EXPENSE.equalsIgnoreCase(params.getFirst()))
+            throw new SplitWiseServiceException("Invalid input", 400);
         try {
-            strategyName = params.get(4 + Integer.parseInt(params.get(3))).toLowerCase();
+            String strategyName = params.get(4 + Integer.parseInt(params.get(3))).toLowerCase();
+            return splittingStrategyFactory.getSplittingStrategy(strategyName).getBill(params);
         } catch (Exception ex) {
             throw new SplitWiseServiceException("Invalid command", 400);
         }
-
-        SplittingStrategy splittingStrategy = splittingStrategyFactory.getSplittingStrategy(strategyName);
-
-        if(!CommandNames.EXPENSE.equalsIgnoreCase(params.getFirst()) || Objects.isNull(splittingStrategy))
-            throw new SplitWiseServiceException("Invalid input", 400);
-
-       return splittingStrategy.getBill(params);
     }
     @Override
     public void execute(List<String> params) throws SplitWiseServiceException {
