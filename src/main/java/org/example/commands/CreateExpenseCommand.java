@@ -3,6 +3,7 @@ package org.example.commands;
 import org.example.constants.CommandNames;
 import org.example.exceptions.SplitWiseServiceException;
 import org.example.factory.SplittingStrategyFactory;
+import org.example.models.Balance;
 import org.example.models.Bill;
 import org.example.services.BalanceService;
 import org.example.services.SplittingStrategy;
@@ -31,7 +32,9 @@ public class CreateExpenseCommand extends Command {
     @Override
     public void execute(List<String> params) throws SplitWiseServiceException {
         Bill bill = getPayload(params);
-        balanceService.saveBalances(bill);
+        List<Balance> balances = balanceService.saveBalances(bill);
+        for(Balance balance: balances)
+            balance.printStatement();
     }
     public BalanceService getBalanceService() {
         return balanceService;

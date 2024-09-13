@@ -43,11 +43,13 @@ public class BalanceServiceImpl implements BalanceService {
     }
 
     @Override
-    public List<Balance> saveBalances(Bill bill) {
+    public List<Balance> saveBalances(Bill bill) throws SplitWiseServiceException {
         List<Balance> balances = new ArrayList<>();
         for(Share share: bill.getShares()) {
-            if(!bill.getSpenderId().equals(share.getUserId()))
-                balances.add(balanceRepository.saveBalance(new Balance(bill.getSpenderId(), share.getUserId(), share.getAmount())));
+            if(!bill.getSpenderId().equals(share.getUserId())) {
+                balanceRepository.saveBalance(new Balance(bill.getSpenderId(), share.getUserId(), share.getAmount()));
+                balances.add(getBalanceForTwoUsers(bill.getSpenderId(), share.getUserId()));
+            }
         }
         return balances;
     }
